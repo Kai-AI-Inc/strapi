@@ -277,6 +277,10 @@ module.exports = ({ models, target }, ctx) => {
 
 const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, definition }) => {
   return function() {
+
+    const shouldCancelPopulate = strapi.custom && strapi.custom.cancelPopulation;
+    if(shouldCancelPopulate) return;
+
     const populatedPaths = this.getPopulatedPaths();
 
     morphAssociations.forEach(association => {

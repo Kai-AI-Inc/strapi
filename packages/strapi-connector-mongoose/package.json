@@ -1,7 +1,7 @@
 {
-  "name": "strapi-connector-mongoose",
+  "name": "strapi-connector-mongoose-modified",
   "version": "3.1.4",
-  "description": "Mongoose hook for the Strapi framework",
+  "description": "Mongoose hook for the Strapi framework - modified",
   "homepage": "http://strapi.io",
   "keywords": [
     "mongoose",
@@ -30,14 +30,13 @@
   },
   "maintainers": [
     {
-      "name": "Strapi team",
-      "email": "hi@strapi.io",
-      "url": "http://strapi.io"
+      "name": "Kai.ai",
+      "email": "services@kai.ai"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/strapi/strapi.git"
+    "url": "https://github.com/Kai-AI-Inc/strapi"
   },
   "bugs": {
     "url": "https://github.com/strapi/strapi/issues"
