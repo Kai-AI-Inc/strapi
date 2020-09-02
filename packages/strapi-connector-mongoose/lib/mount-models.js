@@ -279,8 +279,8 @@ const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, defin
   return function() {
 
     if(strapi.custom && strapi.custom.depthLimit.maxDepth){
-      const depth = (strapi.custom[definition.uid] || 0) + 1;
-      strapi.custom[definition.uid] = depth;
+      const depth = (strapi.custom.depthLimit[definition.uid] || 0) + 1;
+      strapi.custom.depthLimit[definition.uid] = depth;
       if(strapi.custom.depthLimit.fields.includes(definition.uid) && depth > strapi.custom.depthLimit.maxDepth) return;
     }
 
