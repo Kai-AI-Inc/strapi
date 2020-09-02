@@ -278,8 +278,13 @@ module.exports = ({ models, target }, ctx) => {
 const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, definition }) => {
   return function() {
 
-    const shouldCancelPopulate = strapi.custom && strapi.custom.cancelPopulation;
-    if(shouldCancelPopulate) return;
+    if(strapi.custom && strapi.custom.depthLimit.maxDepth){
+      const depth = (strapi.custom[definition.uid] || 0) + 1;
+      strapi.custom[definition.uid] = depth;
+      if(strapi.custom.depthLimit.fields.includes(definition.uid) && depth > strapi.custom.depthLimit.maxDepth) return;
+    }
+
+    if(strapi.custom && strapi.custom.populate == false) return;
 
     const populatedPaths = this.getPopulatedPaths();
 
