@@ -1,4 +1,5 @@
 'use strict';
+const asyncHooks = require('async_hooks');
 
 const _ = require('lodash');
 const mongoose = require('mongoose');
@@ -277,14 +278,30 @@ module.exports = ({ models, target }, ctx) => {
 
 const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, definition }) => {
   return function() {
+    const customQueryOptions = getCustomQueryOptions(definition.uid);
 
-    if(strapi.custom && strapi.custom.depthLimit.maxDepth){
-      const depth = (strapi.custom.depthLimit[definition.uid] || 0) + 1;
-      strapi.custom.depthLimit[definition.uid] = depth;
-      if(strapi.custom.depthLimit.fields.includes(definition.uid) && depth > strapi.custom.depthLimit.maxDepth) return;
+    if(customQueryOptions){
+      console.log("Found Custom Query Option For:" + definition.uid);
+      console.log(customQueryOptions);
+
+      if(customQueryOptions.depthLimit.maxDepth){
+        const depth = (customQueryOptions.depthLimit[definition.uid] || 0) + 1;
+        customQueryOptions.depthLimit[definition.uid] = depth;
+        if(customQueryOptions.depthLimit.fields.includes(definition.uid) && depth > customQueryOptions.depthLimit.maxDepth) return;
+      }
+
+      if(customQueryOptions.populate == false) return;
+    }else{
+      console.log("Undefined Custom Query Option For:" + definition.uid);
+      console.log(customQueryOptions);
     }
 
-    if(strapi.custom && strapi.custom.populate == false) return;
+    if(definition.uid == "application::flows.flows"){
+      //console.log(asyncHooks.executionAsyncId());
+      //console.log(strapi.request_context);
+      console.log("here");
+    }
+    console.log("Populating " + definition.uid);
 
     const populatedPaths = this.getPopulatedPaths();
 
@@ -315,11 +332,11 @@ const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, defin
 
 const buildRelation = ({ definition, model, instance, attribute, name }) => {
   const { nature, verbose } =
-    utilsModels.getNature({
-      attribute,
-      attributeName: name,
-      modelName: model.toLowerCase(),
-    }) || {};
+  utilsModels.getNature({
+    attribute,
+    attributeName: name,
+    modelName: model.toLowerCase(),
+  }) || {};
 
   // Build associations key
   utilsModels.defineAssociations(model.toLowerCase(), definition, attribute, name);
@@ -452,3 +469,26 @@ const buildRelation = ({ definition, model, instance, attribute, name }) => {
       break;
   }
 };
+
+function getCustomQueryOptions(entity){
+  if(!strapi.request_context) return null;
+
+  const contextKey = asyncHooks.executionAsyncId();
+  const context = strapi.request_context.get(contextKey)
+
+  console.log("Getting Custom Query Options: " + entity);
+  console.log("Current Id: " + contextKey);
+  if(!context || !context.query_state) return null;
+
+  console.log("Context found");
+  console.log(context);
+  console.log("Request Map:");
+  console.log(strapi.request_context);
+
+  return context.query_state;
+}
+
+function setCustomQueryOptions(queryOptions) {
+  const contextKey = asyncHooks.executionAsyncId();
+  strapi.request_context.set(contextKey, queryOptions)
+}
