@@ -90,6 +90,12 @@ module.exports = ({ models, target }, ctx) => {
       });
     });
 
+    for (const attribute in definition.loadedModel) {
+      if (_.lowerCase(definition.loadedModel[attribute].type) === 'code') {
+        definition.loadedModel[attribute].type = 'String';
+      }
+    }
+
     const schema = new instance.Schema(
       _.omitBy(definition.loadedModel, ({ type }) => type === 'virtual')
     );
@@ -315,11 +321,11 @@ const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, defin
 
 const buildRelation = ({ definition, model, instance, attribute, name }) => {
   const { nature, verbose } =
-    utilsModels.getNature({
-      attribute,
-      attributeName: name,
-      modelName: model.toLowerCase(),
-    }) || {};
+  utilsModels.getNature({
+    attribute,
+    attributeName: name,
+    modelName: model.toLowerCase(),
+  }) || {};
 
   // Build associations key
   utilsModels.defineAssociations(model.toLowerCase(), definition, attribute, name);

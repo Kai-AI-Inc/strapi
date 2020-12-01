@@ -67,6 +67,7 @@ module.exports = (mongoose = Mongoose) => {
           enum: attr.enum.concat(null),
           default: null,
         };
+      case 'code':
       case 'email':
       case 'password':
       case 'string':
