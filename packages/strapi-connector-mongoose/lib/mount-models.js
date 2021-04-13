@@ -94,6 +94,9 @@ module.exports = ({ models, target }, ctx) => {
       if (_.lowerCase(definition.loadedModel[attribute].type) === 'code') {
         definition.loadedModel[attribute].type = 'String';
       }
+      if (_.lowerCase(definition.loadedModel[attribute].type) === 'conditions') {
+        definition.loadedModel[attribute].type = 'Mixed';
+      }
     }
 
     const schema = new instance.Schema(

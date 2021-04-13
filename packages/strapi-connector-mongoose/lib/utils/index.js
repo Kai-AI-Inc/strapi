@@ -54,6 +54,7 @@ module.exports = (mongoose = Mongoose) => {
       case 'float':
         return { type: 'Float' };
       case 'json':
+      case 'conditions':
         return { type: 'Mixed' };
       case 'biginteger':
         return { type: 'Long' };
