@@ -450,6 +450,12 @@ const formatValue = value => utils.valueToId(value);
  */
 const buildWhereClause = ({ field, operator, value }) => {
   if (Array.isArray(value) && !['or', 'in', 'nin'].includes(operator)) {
+    if(strapi.custom && strapi.custom.useAndForSameProperties){
+      return {
+        $and: value.map(val => buildWhereClause({ field, operator, value: val })),
+      };
+    }
+
     return {
       $or: value.map(val => buildWhereClause({ field, operator, value: val })),
     };
