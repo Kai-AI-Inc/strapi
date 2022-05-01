@@ -45,6 +45,10 @@ const checkDuplicatedTableNames = ({ strapi }) => {
   });
 
   modelsWithInfo.forEach(modelA => {
+    if (modelA.model.options && modelA.model.options.allowDuplicateCollection === true) {
+      return;
+    }
+
     const similarModelFound = modelsWithInfo.find(
       modelB =>
         modelB.model.collectionName === modelA.model.collectionName &&
