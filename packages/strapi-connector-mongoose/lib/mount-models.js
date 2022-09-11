@@ -286,14 +286,15 @@ module.exports = ({ models, target }, ctx) => {
 
 const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, definition }) => {
   return function() {
-
-    if(strapi.custom && strapi.custom.depthLimit.maxDepth){
-      const depth = (strapi.custom.depthLimit[definition.uid] || 0) + 1;
-      strapi.custom.depthLimit[definition.uid] = depth;
-      if(strapi.custom.depthLimit.fields.includes(definition.uid) && depth > strapi.custom.depthLimit.maxDepth) return;
+    if (
+      strapi.custom &&
+      strapi.custom.limitDepth &&
+      strapi.custom.limitDepth({ definition }) === true
+    ) {
+      return;
     }
 
-    if(strapi.custom && strapi.custom.populate == false) return;
+    if (strapi.custom && strapi.custom.populate == false) return;
 
     const populatedPaths = this.getPopulatedPaths();
 
@@ -324,11 +325,11 @@ const createOnFetchPopulateFn = ({ morphAssociations, componentAttributes, defin
 
 const buildRelation = ({ definition, model, instance, attribute, name }) => {
   const { nature, verbose } =
-  utilsModels.getNature({
-    attribute,
-    attributeName: name,
-    modelName: model.toLowerCase(),
-  }) || {};
+    utilsModels.getNature({
+      attribute,
+      attributeName: name,
+      modelName: model.toLowerCase(),
+    }) || {};
 
   // Build associations key
   utilsModels.defineAssociations(model.toLowerCase(), definition, attribute, name);
