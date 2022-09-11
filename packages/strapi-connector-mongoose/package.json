@@ -1,5 +1,5 @@
 {
-  "name": "strapi-connector-mongoose-modified",
+  "name": "@kai-ai/strapi-connector-mongoose",
   "version": "3.1.11",
   "description": "Mongoose hook for the Strapi framework - modified",
   "homepage": "http://strapi.io",
