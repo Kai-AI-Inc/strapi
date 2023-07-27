@@ -1,6 +1,6 @@
 {
-  "name": "strapi-plugin-content-manager",
-  "version": "3.1.4",
+  "name": "@kai-ai/strapi-plugin-content-manager",
+  "version": "3.2.0",
   "description": "A powerful UI to easily manage your data.",
   "strapi": {
     "name": "Content Manager",
