@@ -2,6 +2,18 @@
 
 const _ = require('lodash');
 
+function getServiceMethod(model, method) {
+  if (
+    strapi.entityServiceOverrides &&
+    strapi.entityServiceOverrides[model] &&
+    strapi.entityServiceOverrides[model][method]
+  ) {
+    return strapi.entityServiceOverrides[model][method];
+  }
+
+  return strapi.entityService[method];
+}
+
 /**
  * A set of functions called "actions" for `ContentManager`
  */
@@ -16,7 +28,7 @@ module.exports = {
         }
       : filters;
 
-    return strapi.entityService.find(
+    return getServiceMethod(model, 'find')(
       {
         params: queryFilter,
         populate,
@@ -28,7 +40,7 @@ module.exports = {
   fetch(model, id, config = {}) {
     const { query = {}, populate } = config;
 
-    return strapi.entityService.findOne(
+    return getServiceMethod(model, 'findOne')(
       {
         params: { ...query, id },
         populate,
@@ -38,25 +50,25 @@ module.exports = {
   },
 
   count(model, query) {
-    return strapi.entityService.count({ params: query }, { model });
+    return getServiceMethod(model, 'count')({ params: query }, { model });
   },
 
   create({ data, files }, { model } = {}) {
-    return strapi.entityService.create({ data, files }, { model });
+    return getServiceMethod(model, 'create')({ data, files }, { model });
   },
 
   edit(params, { data, files }, { model } = {}) {
-    return strapi.entityService.update({ params, data, files }, { model });
+    return getServiceMethod(model, 'update')({ params, data, files }, { model });
   },
 
   delete(model, query) {
-    return strapi.entityService.delete({ params: query }, { model });
+    return getServiceMethod(model, 'delete')({ params: query }, { model });
   },
 
   deleteMany(model, ids, query) {
     const { primaryKey } = strapi.query(model);
 
-    return strapi.entityService.delete(
+    return getServiceMethod(model, 'delete')(
       {
         params: {
           _limit: 100,
@@ -69,10 +81,10 @@ module.exports = {
   },
 
   search(model, query, params) {
-    return strapi.entityService.search({ params: { ...query, ...params } }, { model });
+    return getServiceMethod(model, 'search')({ params: { ...query, ...params } }, { model });
   },
 
   countSearch(model, query) {
-    return strapi.entityService.countSearch({ params: query }, { model });
+    return getServiceMethod(model, 'countSearch')({ params: query }, { model });
   },
 };
